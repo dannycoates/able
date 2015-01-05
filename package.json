@@ -1,0 +1,25 @@
+{
+  "name": "able",
+  "version": "1.0.0",
+  "description": "A/B testing server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "tap test"
+  },
+  "author": "",
+  "license": "MPL 2.0",
+  "dependencies": {
+    "abatar": "*",
+    "boom": "2.6.1",
+    "convict": "0.6.0",
+    "glob": "4.3.2",
+    "hapi": "8.0.0",
+    "hapi-fxa-oauth": "2.0.0",
+    "level": "0.18.0",
+    "mozlog": "1.0.1"
+  },
+  "devDependencies": {
+    "tap": "0.4.13"
+  }
+}
