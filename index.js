@@ -148,6 +148,7 @@ server.route([
         getAB(uid, req.params.app, req.payload.enrolled || [],
           function (err, ab) {
             if (err) { return reply(boom.badImplementation()) }
+            ab.subject.uid = uid
             var v = req.params.variable
             var results = {}
             results[v] = ab.choose(v, req.payload.subject)
@@ -186,6 +187,7 @@ server.route([
           function (err, ab) {
             if (err) { return reply(boom.badImplementation()) }
             var vars = ab.variables() //TODO shuffle?
+            ab.subject.uid = uid
             var results = {}
             for (var i = 0; i < vars.length; i++) {
               var v = vars[i]
