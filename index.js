@@ -133,6 +133,18 @@ server.route([
     }
   },
   {
+    method: 'GET',
+    path: '/v1/{app}/attributes',
+    handler: function (req, reply) {
+      getAB(null, req.params.app, [],
+        function (err, ab) {
+          if (err) { return reply(boom.badImplementation()) }
+          reply(ab.attributes())
+        }
+      )
+    }
+  },
+  {
     method: 'POST',
     path: '/v1/{app}/variables/{variable}',
     config: {

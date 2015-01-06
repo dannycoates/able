@@ -27,6 +27,7 @@ if the request is authenticated, so it does not need to be set in the `subject`
 ```sh
 curl -v \
 -X POST \
+-H "Content-Type: application/json" \
 -H "Authorization: Bearer 558f9980ad5a9c279beb52123653967342f702e84d3ab34c7f80427a6a37e2c0" \
 "https://ab.accounts.firefox.com/v1/fxa_content_server/variables" \
 -d '
@@ -59,6 +60,7 @@ Same as `/v1/{ app }/variables` but only returns the `variable` specified.
 ```sh
 curl -v \
 -X POST \
+-H "Content-Type: application/json" \
 -H "Authorization: Bearer 558f9980ad5a9c279beb52123653967342f702e84d3ab34c7f80427a6a37e2c0" \
 "https://ab.accounts.firefox.com/v1/foo/variables/colorScheme" \
 -d '
@@ -79,4 +81,22 @@ A json object with zero or more keys
 {
   "colorScheme": "spacegray"
 }
+```
+
+## GET /v1/{ app }/attributes
+
+Get all the subject attributes used by the current set of experiments
+
+### Request
+
+```sh
+curl -v "https://ab.accounts.firefox.com/v1/foo/attributes"
+```
+
+### Response
+
+An array of subject attribute names
+
+```json
+["uid","sessionId"]
 ```
