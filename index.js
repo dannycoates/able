@@ -202,7 +202,7 @@ server.route([
         getAB(null, req.params.app, req.payload.enrolled || [],
           function (err, ab) {
             if (err) { return reply(boom.badImplementation()) }
-            var v = req.params.variable
+            var vars = ab.variables() //TODO shuffle?
             var results = {}
             for (var i = 0; i < vars.length; i++) {
               var v = vars[i]
