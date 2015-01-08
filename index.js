@@ -235,11 +235,7 @@ server.route([
 db.once(
   'ready',
   function () {
-    experiments.load(
-      function () {
-        server.start()
-      }
-    )
+    server.start()
   }
 )
 
