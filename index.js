@@ -84,10 +84,16 @@ function getAB(uid, app, sessionEnrolled, cb) {
 server.route([
   {
     method: 'GET',
+    path: '/test',
+    handler: function (req, reply) {
+      reply('<html><head><script src="v1/fxa_content_server/experiments.bundle.js"></script></head></html>').type('text/html')
+    }
+  },
+  {
+    method: 'GET',
     path: '/v1/{app}/experiments.bundle.js',
     handler: function (req, reply) {
-      reply(boom.notImplemented())
-      // download the experiment bundle for local client execution
+      reply(experiments.bundle(req.params.app)).type('application/javascript')
     }
   },
   {

@@ -10,8 +10,8 @@
   "author": "",
   "license": "MPL 2.0",
   "dependencies": {
-    "able-projects": "git://github.com/dannycoates/able-projects.git",
     "abatar": "git://github.com/dannycoates/abatar.git#master",
+    "able-projects": "git://github.com/dannycoates/able-projects.git",
     "boom": "2.6.1",
     "convict": "0.6.0",
     "glob": "4.3.2",
