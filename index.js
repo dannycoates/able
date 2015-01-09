@@ -109,10 +109,10 @@ server.route([
       db.get(
         req.auth.credentials.user,
         function (err, value) {
-          if (err && err.notFound) {
-            return reply(boom.notFound())
+          if (err && !err.notFound) {
+            return reply(err)
           }
-          reply(err || value)
+          reply(value || '[]').type('application/json')
         }
       )
     }

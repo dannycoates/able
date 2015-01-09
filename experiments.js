@@ -1,8 +1,9 @@
 var fs = require('fs')
 var path = require('path')
 var projects = require('able-projects')
+
 // TODO: only loading baseBundle this way while I figure other things out
-var baseBundle = fs.readFileSync(path.resolve(__dirname, 'node_modules/abatar/bundle.js'))
+var baseBundle = fs.readFileSync(path.resolve(__dirname, 'bundle.js'))
 
 function experimentDefinition(x) {
   x._eligibilityFunction = null
@@ -24,11 +25,15 @@ var experiments = {
   },
   bundle: function (name) {
     return baseBundle +
-    ';\nvar ab = AB.create([' +
+    ';\nvar able = Able.create({' +
+    'loadUrl:"/v1/my/experiments",' +
+    'saveUrl:"/v1/my/experiments",' +
+    // TODO: defaults
+    'experiments:[' +
     experiments.get(name).map(
       function (x) { return experimentDefinition(x) }
     ).join(',') +
-    ']);console.log(ab)'
+    ']});console.log(able)'
   }
 }
 
