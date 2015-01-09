@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npm run bundle && node index.js",
     "bundle": "browserify browser.js -o bundle.js -s Able",
+    "postinstall": "npm run bundle",
     "test": "tap test"
   },
   "author": "",

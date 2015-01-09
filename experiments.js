@@ -19,18 +19,23 @@ function experimentDefinition(x) {
     )
 }
 
+function getProject(name) {
+  return projects[name] || { experiments: [], defaults: {}}
+}
+
 var experiments = {
   get: function (name) {
-    return projects[name] || []
+    return getProject(name).experiments
   },
   bundle: function (name) {
+    var p = getProject(name)
     return baseBundle +
     ';\nvar able = Able.create({' +
     'loadUrl:"/v1/my/experiments",' +
     'saveUrl:"/v1/my/experiments",' +
-    // TODO: defaults
+    'defaults:' + JSON.stringify(p.defaults) + ',' +
     'experiments:[' +
-    experiments.get(name).map(
+    p.experiments.map(
       function (x) { return experimentDefinition(x) }
     ).join(',') +
     ']});console.log(able)'
