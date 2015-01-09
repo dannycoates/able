@@ -9,18 +9,20 @@ function Able(options) {
   this.subject = this.ab.subject
 }
 
-// overwritten externally with the server's Date.now()
+// this gets overwritten externally with the server's Date.now()
 Able.serverLoadedAt = Date.now()
 // client's local loaded time (for syncing with server time)
 Able.clientLoadedAt = Date.now()
 
 Able.now = function () {
+  // all experiment time comparisons should be based off of server time.
+  // Able.serverLoadedAt gets set on the server when the js is "rendered".
+  // Able.clientLoadedAt gets set on the client when this file is initialized.
+  // For our purposes we can consider these two times to be "equal", so to get
+  // the current server time at any point we can just add the difference
+  // of the load times to the current client time.
   var delta = Able.serverLoadedAt - Able.clientLoadedAt
   return Date.now() + delta
-}
-
-Able.create = function (options) {
-  return new Able(options)
 }
 
 Able.prototype.authenticate = function (token, cb) {

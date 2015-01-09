@@ -30,7 +30,8 @@ var experiments = {
   bundle: function (name) {
     var p = getProject(name)
     return baseBundle +
-    ';\nvar able = Able.create({' +
+    ';Able.serverLoadedAt = ' + Date.now() + ';' +
+    'var able = new Able({' +
     'loadUrl:"/v1/my/experiments",' +
     'saveUrl:"/v1/my/experiments",' +
     'defaults:' + JSON.stringify(p.defaults) + ',' +
@@ -38,7 +39,7 @@ var experiments = {
     p.experiments.map(
       function (x) { return experimentDefinition(x) }
     ).join(',') +
-    ']});console.log(able)'
+    ']});'
   }
 }
 
