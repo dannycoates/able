@@ -1,11 +1,11 @@
 {
   "name": "able",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A/B testing server",
   "main": "index.js",
   "scripts": {
     "start": "npm run bundle && node index.js",
-    "bundle": "browserify browser.js -o bundle.js -s Able",
+    "bundle": "browserify browser.js -s Able | uglifyjs -cm -o bundle.js",
     "postinstall": "npm run bundle",
     "test": "tap test"
   },
@@ -22,6 +22,7 @@
     "hapi-fxa-oauth": "2.0.1",
     "level": "0.18.0",
     "mozlog": "1.0.1",
+    "uglify-js": "2.4.16",
     "xhr": "2.0.0"
   },
   "devDependencies": {
