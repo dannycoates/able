@@ -1,9 +1,15 @@
 able A/B testing service
 ========================
 
+[Roadmap](doc/roadmap.md)
+
 # API Endpoints
 
 Authorization is done with an oauth token from the [FxA Oauth Server](https://github.com/mozilla/fxa-oauth-server)
+
+## GET /v1/{ app }/experiments.bundle.js
+
+Returns a javascipt bundle for running experiments locally.
 
 ## POST /v1/{ app }/variables
 
