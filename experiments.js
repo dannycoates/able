@@ -1,6 +1,7 @@
 var fs = require('fs')
 var path = require('path')
-var projects = require('able-projects')
+var config = require('./config')
+var projects = require('./projects')(config.projects.path)
 
 // TODO: only loading baseBundle this way while I figure other things out
 var baseBundle = fs.readFileSync(path.resolve(__dirname, 'bundle.js'))
@@ -27,14 +28,13 @@ var experiments = {
   get: function (name) {
     return getProject(name).experiments
   },
-  bundle: function (name) {
+  bundle: function (name, subject) {
     var p = getProject(name)
     return baseBundle +
-    ';Able.serverLoadedAt = ' + Date.now() + ';' +
     'var able = new Able({' +
-    'loadUrl:"/v1/my/experiments",' +
-    'saveUrl:"/v1/my/experiments",' +
+    'remoteNow:' + Date.now() + ',' +
     'defaults:' + JSON.stringify(p.defaults) + ',' +
+    'subject:' + JSON.stringify(subject) + ',' +
     'experiments:[' +
     p.experiments.map(
       function (x) { return experimentDefinition(x) }

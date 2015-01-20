@@ -41,6 +41,12 @@ var config = convict(
         format: Boolean,
         default: false
       }
+    },
+    projects: {
+      path: {
+        format: String,
+        default: './projects'
+      }
     }
   }
 )

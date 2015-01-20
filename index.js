@@ -84,16 +84,25 @@ function getAB(uid, app, sessionEnrolled, cb) {
 server.route([
   {
     method: 'GET',
-    path: '/test',
+    path: '/test/{app}',
     handler: function (req, reply) {
-      reply('<html><head><script src="v1/fxa_content_server/experiments.bundle.js"></script></head></html>').type('text/html')
+      reply('<html><head><script src="../v1/' +
+        req.params.app +
+        '/experiments.bundle.js"></script></head></html>').type('text/html')
     }
   },
   {
     method: 'GET',
     path: '/v1/{app}/experiments.bundle.js',
     handler: function (req, reply) {
-      reply(experiments.bundle(req.params.app)).type('application/javascript')
+      reply(
+        experiments.bundle(
+          req.params.app,
+          {
+            clientAddress: req.info.remoteAddress
+          }
+        )
+      ).type('application/javascript')
     }
   },
   {
