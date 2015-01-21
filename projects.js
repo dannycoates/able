@@ -1,6 +1,24 @@
 var glob = require('glob')
 var path = require('path')
 
+function experimentDefinition(x) {
+  x._eligibilityFunction = null
+  x._groupingFunction = null
+  return JSON.stringify(x)
+    .replace(
+      /"_eligibilityFunction":null/,
+      '"eligibilityFunction":' + x.eligibilityFunction.toString()
+    )
+    .replace(
+      /"_groupingFunction":null/,
+    '"groupingFunction":' + x.groupingFunction.toString()
+    )
+}
+
+function createSource(experiments) {
+  return '[' + experiments.map(experimentDefinition).join(',') + ']'
+}
+
 function loadExperiments(dirname) {
   var filenames = glob.sync(dirname + '/**/*.js')
   var experiments = []
@@ -13,9 +31,11 @@ function loadExperiments(dirname) {
 function loadProject(pkgFilename, projects) {
   var dirname = path.dirname(pkgFilename)
   var pkg = require(pkgFilename)
+  var experiments = loadExperiments(dirname)
   projects[pkg.name] = {
-    experiments: loadExperiments(dirname),
-    defaults: require(dirname + '/defaults.json')
+    experiments: experiments,
+    defaults: require(dirname + '/defaults.json'),
+    source: createSource(experiments)
   }
 }
 
