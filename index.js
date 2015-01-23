@@ -5,13 +5,7 @@ var AB = require('abatar')
 /*/
     Logging configuration
 /*/
-var mozlog = require('mozlog')
-mozlog.config({
-  app: 'ab-server',
-  level: config.log.level,
-  fmt: config.log.fmt
-})
-var log = mozlog('ab')
+var log = require('./log')
 
 /*/
     Database configuration
@@ -22,8 +16,7 @@ var db = level(config.db.path)
 /*/
     Experiments
 /*/
-var experiments = require('./experiments')
-
+var registry = require('./registry')
 /*/
     HTTP server configuration
 /*/
@@ -76,7 +69,7 @@ function getAB(uid, app, sessionEnrolled, cb) {
     uid,
     function (err, enrolled) {
       if (err) { return cb(err) }
-      return cb(null, AB.create(experiments.get(app), enrolled.concat(sessionEnrolled)))
+      return cb(null, AB.create(registry.experiments(app), enrolled.concat(sessionEnrolled)))
     }
   )
 }
@@ -96,7 +89,7 @@ server.route([
     path: '/v1/{app}/experiments.bundle.js',
     handler: function (req, reply) {
       reply(
-        experiments.bundle(
+        registry.bundle(
           req.params.app,
           {
             clientAddress: req.info.remoteAddress
@@ -247,9 +240,9 @@ server.route([
     Start your engines
 /*/
 
-db.once(
-  'ready',
-  function () {
+registry.load(
+  function (err) {
+    if (err) { return process.exit(8) }
     server.start()
   }
 )
@@ -261,6 +254,7 @@ db.once(
 process.on(
   'SIGINT',
   function () {
+    registry.stop()
     server.stop(
       function () {
         db.close(log.info.bind(log, 'shutdown'))

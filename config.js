@@ -46,6 +46,10 @@ var config = convict(
       path: {
         format: String,
         default: './projects'
+      },
+      registry: {
+        format: String,
+        default: 'https://github.com/dannycoates/able-projects.git#master'
       }
     }
   }
