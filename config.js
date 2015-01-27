@@ -49,7 +49,7 @@ var config = convict(
       },
       registry: {
         format: String,
-        default: 'https://github.com/dannycoates/able-projects.git#master'
+        default: 'https://github.com/mozilla/able-registry-dev.git#master'
       }
     }
   }
