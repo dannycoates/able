@@ -130,12 +130,16 @@ Registry.prototype.load = function (cb) {
   }
   this.update(
     function (err) {
+      if (err) {
+        return cb(err)
+      }
       this.projects = loadProjects(projectDir)
       this.checkTimer = setTimeout(this.watch.bind(this), 30000)
       this.on(
         'changed',
         function () {
           this.projects = loadProjects(projectDir)
+          cb()
         }.bind(this)
       )
     }.bind(this)
