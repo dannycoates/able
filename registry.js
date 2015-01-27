@@ -123,6 +123,11 @@ Registry.prototype.update = function (cb) {
 }
 
 Registry.prototype.load = function (cb) {
+  if (!registryRepo) {
+    // no registry, just load from the directory
+    this.projects = loadProjects(projectDir)
+    return cb()
+  }
   this.update(
     function (err) {
       this.projects = loadProjects(projectDir)
