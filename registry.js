@@ -139,9 +139,9 @@ Registry.prototype.load = function (cb) {
         'changed',
         function () {
           this.projects = loadProjects(projectDir)
-          cb()
         }.bind(this)
       )
+      cb()
     }.bind(this)
   )
 }
