@@ -74,7 +74,26 @@ function getAB(uid, app, sessionEnrolled, cb) {
   )
 }
 
+function version() {
+  try {
+    return {
+      version: require('./package.json').version,
+      // this file is created by the rpm build in prod/stage
+      commit: require('./config/version.json').version.hash
+    }
+  } catch(e) { /* ignore */ }
+
+  return {}
+}
+
 server.route([
+  {
+    method: 'GET',
+    path: '/',
+    handler: function (req, reply) {
+      reply(version()).type('application/json')
+    }
+  },
   {
     method: 'GET',
     path: '/test/{app}',
