@@ -1,75 +1,42 @@
 var async = require('async')
 var config = require('./config')
-var EventEmitter = require('events').EventEmitter
-var exec = require('child_process').exec
 var fs = require('fs')
 var gh = require('github-url-to-object')
-var inherits = require('util').inherits
+var gitUtil = require('./git-util')
+var glob = require('glob')
 var log = require('./log')
 var path = require('path')
-
-var projectDir = path.resolve(__dirname, config.projects.path)
-var registryRepo = gh(config.projects.registry)
+var Project = require('./project')
 
 var baseBundle = fs.readFileSync(path.resolve(__dirname, 'bundle.js'))
-var loadProjects = require('./projects')
 
-function whatevs() { log.debug('whatevs', arguments) }
-
-function clone(url, dir, branch, cb) {
-  return exec(
-    ['git clone -b', branch, url, dir].join(' '),
-    {
-      cwd: path.dirname(dir)
-    },
-    function (err, stdout, stderr) {
-      log.debug('clone', { stdout: stdout, stderr: stderr })
-      return cb(err, true)
-    }
-  )
+function projectsFromArray(projects) {
+  projects = projects || []
+  var result = {}
+  for (var i = 0; i < projects.length; i++) {
+    var project = projects[i]
+    result[project.name] = project
+  }
+  return result
 }
 
-function fetch(dir, branch, cb) {
-  return exec(
-    'git fetch -v origin ' + branch + ' && git reset --hard FETCH_HEAD',
-    { cwd: dir },
-    function (err, stdout, stderr) {
-      if (err) { return cb(err) }
-      log.debug('fetch', { stdout: stdout, stderr: stderr })
-      // TODO: this is a pretty ghetto check
-      return cb(null, !(/up to date/.test(stderr)))
-    }
-  )
-}
-
-function cloneOrFetch(url, dir, branch, cb) {
-  fs.exists(
-    dir,
-    function (exists) {
-      return exists ?
-        fetch(dir, branch, cb) :
-        clone(url, dir, branch, cb)
-    }
-  )
-}
-
-function updateProjects(cb) {
+function loadProjects(dirname, cb) {
   fs.readFile(
-    path.resolve(projectDir, 'package.json'),
+    path.resolve(dirname, 'package.json'),
     function (err, data) {
       if (err) { return cb(err) }
       try {
-        var pkg = JSON.parse(data)
-        var projects = pkg.able || []
         async.map(
-          projects,
+          JSON.parse(data).able || [],
           function (project, done) {
-            var projectRepo = gh(project)
-            var dir = path.resolve(projectDir, projectRepo.repo)
-            cloneOrFetch(projectRepo.https_url, dir, projectRepo.branch, done)
+            Project.load(
+              path.resolve(dirname, gh(project).repo),
+              project,
+              done
+            )
           },
-          function (err, results) {
-            cb(err, (results && results.indexOf(true) > -1))
+          function (err, projects) {
+            cb(err, projectsFromArray(projects))
           }
         )
       }
@@ -78,44 +45,70 @@ function updateProjects(cb) {
   )
 }
 
-function Registry() {
-  EventEmitter.call(this)
+function Registry(projectDir, registryUrl) {
+  this.projectDir = projectDir
+  this.git = registryUrl ? gh(registryUrl) : null
   this.projects = {}
-  this.checkTimer = null
+  this.watchTimer = null
+  this.loaded = false
 }
-inherits(Registry, EventEmitter)
 
-Registry.prototype.watch = function () {
+Registry.prototype.clean = function () {
+
+}
+
+Registry.prototype.watch = function (cb) {
   this.stop()
-  this.update(
+  this.pull(
     function (err) {
-      if (err) {
-        log.error('registry.watch', err)
-      }
-      this.checkTimer = setTimeout(this.watch.bind(this), 30000)
+      if (err) { log.error('registry.watch', err) }
+      this.watchTimer = setTimeout(this.watch.bind(this), 30000)
+      if (cb) { cb(err, this) }
     }.bind(this)
   )
 }
 
 Registry.prototype.stop = function () {
-  clearTimeout(this.checkTimer)
-  this.checkTimer = null
+  clearTimeout(this.watchTimer)
+  this.watchTimer = null
 }
 
-Registry.prototype.update = function (cb) {
-  cb = cb || whatevs
-  return cloneOrFetch(
-    registryRepo.https_url,
-    projectDir,
-    registryRepo.branch,
-    function (err) {
+Registry.prototype.pull = function (cb) {
+  gitUtil.cloneOrFetch(
+    this.git.https_url,
+    this.projectDir,
+    this.git.branch,
+    function (err, changed) {
+      if (err || (!changed && this.loaded)) { return cb(err) }
+      this.all().forEach(function (p) { p.stop() })
+      loadProjects(
+        this.projectDir,
+        function (err, projects) {
+          if (err) { return cb(err) }
+          this.projects = projects
+          this.loaded = true
+          cb()
+        }.bind(this)
+      )
+    }.bind(this)
+  )
+}
+
+Registry.prototype.loadProjectsFromDir = function (cb) {
+  glob(
+    this.projectDir + '/*/package.json',
+    function (err, pkgFilenames) {
       if (err) { return cb(err) }
-      updateProjects(
-        function (err, changed) {
-          if (changed) {
-            this.emit('changed')
-          }
-          return cb(err)
+      async.map(
+        pkgFilenames,
+        function (filename, next) {
+          Project.load(path.dirname(filename), null, next)
+        },
+        function (err, projects) {
+          if (err) { return cb (err) }
+          this.projects = projectsFromArray(projects)
+          this.loaded = true
+          cb(null, this)
         }.bind(this)
       )
     }.bind(this)
@@ -123,31 +116,25 @@ Registry.prototype.update = function (cb) {
 }
 
 Registry.prototype.load = function (cb) {
-  if (!registryRepo) {
-    // no registry, just load from the directory
-    this.projects = loadProjects(projectDir)
-    return cb()
-  }
-  this.update(
-    function (err) {
-      if (err) {
-        return cb(err)
-      }
-      this.projects = loadProjects(projectDir)
-      this.checkTimer = setTimeout(this.watch.bind(this), 30000)
-      this.on(
-        'changed',
-        function () {
-          this.projects = loadProjects(projectDir)
-        }.bind(this)
-      )
-      cb()
+  return this.git ?
+    this.watch(cb) :
+    this.loadProjectsFromDir(cb)
+}
+
+Registry.prototype.all = function () {
+  return Object.keys(this.projects).map(
+    function (name) {
+      return this.projects[name]
     }.bind(this)
   )
 }
 
 Registry.prototype.project = function (name) {
-  return this.projects[name] || { experiments: [], defaults: {}, source: '[]' }
+  return this.projects[name] || {
+    experiments: [],
+    defaults: {},
+    source: function() { return '[]' }
+  }
 }
 
 Registry.prototype.experiments = function (name) {
@@ -161,12 +148,12 @@ Registry.prototype.bundle = function (name, subject) {
   'remoteNow:' + Date.now() + ',' +
   'defaults:' + JSON.stringify(p.defaults) + ',' +
   'subject:' + JSON.stringify(subject) + ',' +
-  'experiments:' + p.source +
+  'experiments:' + p.source() +
   '});'
 }
 
-module.exports = new Registry()
+module.exports = new Registry(
+  path.resolve(__dirname, config.projects.path),
+  config.projects.registry
+)
 
-if (require.main === module) {
-  module.exports.watch()
-}

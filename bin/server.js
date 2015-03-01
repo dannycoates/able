@@ -1,11 +1,11 @@
-var config = require('./config')
+var config = require('../config')
 var boom = require('boom')
 var AB = require('abatar')
 
 /*/
     Logging configuration
 /*/
-var log = require('./log')
+var log = require('../log')
 
 /*/
     Database configuration
@@ -16,7 +16,7 @@ var db = level(config.db.path)
 /*/
     Experiments
 /*/
-var registry = require('./registry')
+var registry = require('../registry')
 /*/
     HTTP server configuration
 /*/
