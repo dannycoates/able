@@ -73,9 +73,7 @@ function getAB(uid, app, sessionEnrolled, cb) {
     uid,
     function (err, enrolled) {
       if (err) { return cb(err) }
-      var ab = registry.project(app).ab()
-      if (!ab) { return cb(new Error('not found')) }
-      cb(null, ab)
+      cb(null, registry.project(app).ab())
     }
   )
 }
@@ -260,7 +258,7 @@ registry.load(
 process.on(
   'SIGINT',
   function () {
-    registry.stop()
+    registry.stopAll()
     server.stop(
       function () {
         db.close(log.info.bind(log, 'shutdown'))

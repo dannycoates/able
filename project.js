@@ -6,6 +6,8 @@ var gitUtil = require('./git-util')
 var glob = require('glob')
 var path = require('path')
 
+var baseBundle = fs.readFileSync(path.resolve(__dirname, 'bundle.js'))
+
 function Project(root, gitUrl) {
   this.root = root
   this.gitUrl = gitUrl
@@ -104,6 +106,16 @@ Project.prototype.ab = function (enrolled) {
     enrolled: enrolled || [],
     experiments: this.experiments
   })
+}
+
+Project.prototype.bundle = function (subject) {
+  return baseBundle +
+    'var able = new Able({' +
+    'remoteNow:' + Date.now() + ',' +
+    'defaults:' + JSON.stringify(this.defaults) + ',' +
+    'subject:' + JSON.stringify(subject) + ',' +
+    'experiments:' + this.source() +
+    '});'
 }
 
 Project.load = function (dirname, gitUrl, cb) {

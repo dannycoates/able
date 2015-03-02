@@ -6,8 +6,6 @@ var glob = require('glob')
 var path = require('path')
 var Project = require('./project')
 
-var baseBundle = fs.readFileSync(path.resolve(__dirname, 'bundle.js'))
-
 function projectsFromArray(projects) {
   projects = projects || []
   var result = {}
@@ -59,7 +57,6 @@ Registry.prototype.watch = function (cb) {
   this.stop()
   this.pull(
     function (err) {
-      if (err) { log.error('registry.watch', err) }
       this.watchTimer = setTimeout(this.watch.bind(this), 30000)
       if (cb) { cb(err, this) }
     }.bind(this)
@@ -71,6 +68,15 @@ Registry.prototype.stop = function () {
   this.watchTimer = null
 }
 
+Registry.prototype.stopProjects = function () {
+  this.all().forEach(function (p) { p.stop() })
+}
+
+Registry.prototype.stopAll = function () {
+  this.stop()
+  this.stopProjects()
+}
+
 Registry.prototype.pull = function (cb) {
   gitUtil.cloneOrFetch(
     this.git.https_url,
@@ -78,7 +84,7 @@ Registry.prototype.pull = function (cb) {
     this.git.branch,
     function (err, changed) {
       if (err || (!changed && this.loaded)) { return cb(err) }
-      this.all().forEach(function (p) { p.stop() })
+      this.stopProjects()
       loadProjects(
         this.projectDir,
         function (err, projects) {
@@ -128,27 +134,11 @@ Registry.prototype.all = function () {
 }
 
 Registry.prototype.project = function (name) {
-  return this.projects[name] || {
-    experiments: [],
-    defaults: {},
-    source: function() { return '[]' },
-    ab: function () { return null }
-  }
-}
-
-Registry.prototype.experiments = function (name) {
-  return this.project(name).experiments
+  return this.projects[name] || new Project()
 }
 
 Registry.prototype.bundle = function (name, subject) {
-  var p = this.project(name)
-  return baseBundle +
-  'var able = new Able({' +
-  'remoteNow:' + Date.now() + ',' +
-  'defaults:' + JSON.stringify(p.defaults) + ',' +
-  'subject:' + JSON.stringify(subject) + ',' +
-  'experiments:' + p.source() +
-  '});'
+  return this.project(name).bundle(subject)
 }
 
 module.exports = Registry
