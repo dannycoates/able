@@ -1,6 +1,5 @@
 var config = require('../config')
 var boom = require('boom')
-var AB = require('abatar')
 var path = require('path')
 
 /*/
@@ -74,7 +73,9 @@ function getAB(uid, app, sessionEnrolled, cb) {
     uid,
     function (err, enrolled) {
       if (err) { return cb(err) }
-      return cb(null, AB.create(registry.experiments(app), enrolled.concat(sessionEnrolled)))
+      var ab = registry.project(app).ab()
+      if (!ab) { return cb(new Error('not found')) }
+      cb(null, ab)
     }
   )
 }

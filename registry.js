@@ -3,7 +3,6 @@ var fs = require('fs')
 var gh = require('github-url-to-object')
 var gitUtil = require('./git-util')
 var glob = require('glob')
-var log = require('./log')
 var path = require('path')
 var Project = require('./project')
 
@@ -132,7 +131,8 @@ Registry.prototype.project = function (name) {
   return this.projects[name] || {
     experiments: [],
     defaults: {},
-    source: function() { return '[]' }
+    source: function() { return '[]' },
+    ab: function () { return null }
   }
 }
 

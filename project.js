@@ -1,9 +1,10 @@
+var abatar = require('abatar')
 var async = require('async')
-var glob = require('glob')
-var path = require('path')
 var fs = require('fs')
 var gh = require('github-url-to-object')
 var gitUtil = require('./git-util')
+var glob = require('glob')
+var path = require('path')
 
 function Project(root, gitUrl) {
   this.root = root
@@ -95,6 +96,14 @@ Project.prototype.source = function () {
     this.src = '[' + this.experiments.map(experimentDefinition).join(',') + ']'
   }
   return this.src
+}
+
+Project.prototype.ab = function (enrolled) {
+  return abatar.create({
+    defaults: this.defaults,
+    enrolled: enrolled || [],
+    experiments: this.experiments
+  })
 }
 
 Project.load = function (dirname, gitUrl, cb) {
