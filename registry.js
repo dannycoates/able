@@ -1,5 +1,4 @@
 var async = require('async')
-var config = require('./config')
 var fs = require('fs')
 var gh = require('github-url-to-object')
 var gitUtil = require('./git-util')
@@ -152,8 +151,5 @@ Registry.prototype.bundle = function (name, subject) {
   '});'
 }
 
-module.exports = new Registry(
-  path.resolve(__dirname, config.projects.path),
-  config.projects.registry
-)
+module.exports = Registry
 

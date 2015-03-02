@@ -1,6 +1,7 @@
 var config = require('../config')
 var boom = require('boom')
 var AB = require('abatar')
+var path = require('path')
 
 /*/
     Logging configuration
@@ -16,7 +17,11 @@ var db = level(config.db.path)
 /*/
     Experiments
 /*/
-var registry = require('../registry')
+var Registry = require('../registry')
+var registry = new Registry(
+  path.resolve(__dirname, '..', config.projects.path),
+  config.projects.registry
+)
 /*/
     HTTP server configuration
 /*/
