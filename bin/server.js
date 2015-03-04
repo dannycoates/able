@@ -8,12 +8,6 @@ var path = require('path')
 var log = require('../log')
 
 /*/
-    Database configuration
-/*/
-var level = require('level')
-var db = level(config.db.path)
-
-/*/
     Experiments
 /*/
 var Registry = require('../registry')
@@ -55,27 +49,8 @@ server.register(
   }
 )
 
-function getEnrolled(uid, cb) {
-  if (!uid) { return cb(null, []) }
-  db.get(
-    uid,
-    function (err, value) {
-      if (err && !err.notFound) {
-        return cb(err)
-      }
-      cb(null, value ? JSON.parse(value) : [])
-    }
-  )
-}
-
-function getAB(uid, app, sessionEnrolled, cb) {
-  getEnrolled(
-    uid,
-    function (err, enrolled) {
-      if (err) { return cb(err) }
-      cb(null, registry.project(app).ab())
-    }
-  )
+function getAB(uid, app, enrolled, cb) {
+  cb(null, registry.project(app).ab(enrolled))
 }
 
 server.route([
@@ -100,48 +75,6 @@ server.route([
           }
         )
       ).type('application/javascript')
-    }
-  },
-  {
-    method: 'GET',
-    path: '/v1/my/experiments',
-    config: {
-      auth: {
-        strategy: 'fxa-oauth',
-        scope: ['ab']
-      }
-    },
-    handler: function (req, reply) {
-      db.get(
-        req.auth.credentials.user,
-        function (err, value) {
-          if (err && !err.notFound) {
-            return reply(err)
-          }
-          reply(value || '[]').type('application/json')
-        }
-      )
-    }
-  },
-  {
-    method: 'PUT',
-    path: '/v1/my/experiments',
-    config: {
-      auth: {
-        strategy: 'fxa-oauth',
-        scope: ['ab']
-      },
-      payload: {
-        parse: 'gunzip'
-      }
-    },
-    handler: function (req, reply) {
-      // TODO validation / merge
-      db.put(
-        req.auth.credentials.user,
-        req.payload,
-        reply
-      )
     }
   },
   {
@@ -176,7 +109,7 @@ server.route([
             var v = req.params.variable
             var results = {}
             results[v] = ab.choose(v, req.payload.subject)
-            db.put(uid, JSON.stringify(ab.enrolled.names()), function () {})
+            //db.put(uid, JSON.stringify(ab.enrolled.names()), function () {})
             reply(results)
           }
         )
@@ -217,7 +150,7 @@ server.route([
               var v = vars[i]
               results[v] = ab.choose(v, req.payload.subject)
             }
-            db.put(uid, JSON.stringify(ab.enrolled.names()), function () {})
+            //db.put(uid, JSON.stringify(ab.enrolled.names()), function () {})
             reply(results)
           }
         )
@@ -246,8 +179,21 @@ server.route([
 
 registry.load(
   function (err) {
-    if (err) { return process.exit(8) }
-    server.start()
+    if (err) {
+      log.critical('registry.load', err)
+      return process.exit(8)
+    }
+    server.start(
+      function () {
+        log.info(
+          'server.start',
+          {
+            host: config.server.host,
+            port: config.server.port
+          }
+        )
+      }
+    )
   }
 )
 
@@ -259,10 +205,6 @@ process.on(
   'SIGINT',
   function () {
     registry.stopAll()
-    server.stop(
-      function () {
-        db.close(log.info.bind(log, 'shutdown'))
-      }
-    )
+    server.stop(log.info.bind(log, 'shutdown'))
   }
 )
