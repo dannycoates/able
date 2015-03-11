@@ -1,6 +1,6 @@
 {
   "name": "able",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A/B testing server",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
     "browserify": "9.0.3",
     "convict": "0.6.1",
     "github-url-to-object": "1.4.2",
-    "glob": "4.4.1",
+    "glob": "5.0.2",
     "hapi": "8.2.0",
     "hapi-fxa-oauth": "2.0.1",
     "mozlog": "1.0.3",
