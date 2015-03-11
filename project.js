@@ -118,10 +118,15 @@ Project.prototype.bundle = function (subject) {
     '});'
 }
 
-Project.load = function (dirname, gitUrl, cb) {
-  var project = new Project(dirname, gitUrl)
-  if (gitUrl) {
-    project.watch(cb)
+Project.load = function (options, cb) {
+  var project = new Project(options.dirname, options.gitUrl)
+  if (options.gitUrl) {
+    if (options.watch) {
+      project.watch(cb)
+    }
+    else {
+      project.pullAndLoad(cb)
+    }
   }
   else {
     project.load(cb)

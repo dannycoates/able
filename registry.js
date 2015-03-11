@@ -26,8 +26,11 @@ function loadProjects(dirname, cb) {
           JSON.parse(data).able || [],
           function (project, done) {
             Project.load(
-              path.resolve(dirname, gh(project).repo),
-              project,
+              {
+                dirname: path.resolve(dirname, gh(project).repo),
+                gitUrl: project,
+                watch: true
+              },
               done
             )
           },
@@ -106,7 +109,7 @@ Registry.prototype.loadProjectsFromDir = function (cb) {
       async.map(
         pkgFilenames,
         function (filename, next) {
-          Project.load(path.dirname(filename), null, next)
+          Project.load({ dirname: path.dirname(filename) }, next)
         },
         function (err, projects) {
           if (err) { return cb (err) }

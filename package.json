@@ -1,6 +1,6 @@
 {
   "name": "able",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A/B testing server",
   "main": "index.js",
   "scripts": {
@@ -19,12 +19,12 @@
     "convict": "0.6.1",
     "github-url-to-object": "1.4.2",
     "glob": "5.0.2",
-    "hapi": "8.2.0",
+    "hapi": "8.3.1",
     "hapi-fxa-oauth": "2.0.1",
     "mozlog": "1.0.3",
-    "uglify-js": "2.4.16"
+    "uglify-js": "2.4.17"
   },
   "devDependencies": {
-    "tap": "0.6.0"
+    "tap": "0.7.1"
   }
 }
