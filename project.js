@@ -108,13 +108,14 @@ Project.prototype.ab = function (enrolled) {
   })
 }
 
-Project.prototype.bundle = function (subject) {
+Project.prototype.bundle = function (reportUrl, subject) {
   return baseBundle +
     'var able = new Able({' +
     'remoteNow:' + Date.now() + ',' +
     'defaults:' + JSON.stringify(this.defaults) + ',' +
     'subject:' + JSON.stringify(subject) + ',' +
-    'experiments:' + this.source() +
+    'experiments:' + this.source() + ',' +
+    'reportUrl:"' + reportUrl + '"' +
     '});'
 }
 

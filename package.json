@@ -1,6 +1,6 @@
 {
   "name": "able",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A/B testing server",
   "main": "index.js",
   "scripts": {
@@ -12,17 +12,19 @@
   "author": "",
   "license": "MPL 2.0",
   "dependencies": {
-    "abatar": "0.3.0",
+    "abatar": "0.3.1",
     "async": "0.9.0",
-    "boom": "2.7.0",
+    "boom": "2.6.1",
     "browserify": "9.0.8",
     "convict": "0.6.1",
-    "github-url-to-object": "1.5.0",
+    "github-url-to-object": "1.5.2",
     "glob": "5.0.5",
     "hapi": "8.4.0",
     "hapi-fxa-oauth": "2.0.1",
+    "inherits": "2.0.1",
     "mozlog": "2.0.0",
-    "uglify-js": "2.4.20"
+    "uglify-js": "2.4.20",
+    "xhr": "2.0.1"
   },
   "devDependencies": {
     "tap": "0.7.1"
