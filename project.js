@@ -164,14 +164,16 @@ function loadExperiments(dirname, cb) {
 function experimentDefinition(x) {
   x._eligibilityFunction = null
   x._groupingFunction = null
+  var efn = x.eligibilityFunction || 'null'
+  var gfn = x.groupingFunction || 'null'
   return JSON.stringify(x)
     .replace(
       /"_eligibilityFunction":null/,
-      '"eligibilityFunction":' + x.eligibilityFunction.toString()
+      '"eligibilityFunction":' + efn.toString()
     )
     .replace(
       /"_groupingFunction":null/,
-    '"groupingFunction":' + x.groupingFunction.toString()
+    '"groupingFunction":' + gfn.toString()
     )
 }
 
