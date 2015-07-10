@@ -17,7 +17,7 @@
     "boom": "2.6.1",
     "browserify": "9.0.8",
     "convict": "0.6.1",
-    "github-url-to-object": "1.5.2",
+    "github-url-to-object": "git://github.com/vladikoff/github-url-to-object.git#clone_url",
     "glob": "5.0.5",
     "hapi": "8.4.0",
     "hapi-fxa-oauth": "2.0.1",

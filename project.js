@@ -22,7 +22,7 @@ function Project(root, gitUrl) {
 
 Project.prototype.pull = function (cb) {
   gitUtil.cloneOrFetch(
-    this.git.https_url,
+    this.git.clone_url,
     this.root,
     this.git.branch,
     cb
