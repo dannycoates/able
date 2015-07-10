@@ -1,16 +1,14 @@
 {
   "name": "able",
-  "version": "0.4.1",
   "description": "A/B testing server",
-  "main": "index.js",
-  "scripts": {
-    "start": "npm run bundle && node bin/server.js",
-    "bundle": "browserify browser.js -s Able | uglifyjs -cm -o bundle.js",
-    "postinstall": "npm run bundle",
-    "test": "tap test"
+  "version": "0.4.1",
+  "author": "Danny Coates",
+  "bin": {
+    "able": "server.js"
   },
-  "author": "",
-  "license": "MPL 2.0",
+  "bugs": {
+    "url": "https://github.com/dannycoates/able/issues"
+  },
   "dependencies": {
     "abatar": "0.3.1",
     "async": "0.9.0",
@@ -27,6 +25,26 @@
     "xhr": "2.0.1"
   },
   "devDependencies": {
+    "eslint": "0.24.0",
+    "eslint-config-fxa": "1.8.0",
     "tap": "0.7.1"
+  },
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "homepage": "https://github.com/dannycoates/able#readme",
+  "license": "MPL-2.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dannycoates/able.git"
+  },
+  "scripts": {
+    "bundle": "browserify browser.js -s Able | uglifyjs -cm -o bundle.js",
+    "lint": "eslint .",
+    "postinstall": "npm run bundle",
+    "start": "npm run bundle && node bin/server.js",
+    "test": "tap test"
   }
 }
