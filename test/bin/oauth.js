@@ -1,4 +1,3 @@
-var boom = require('boom')
 var hapi = require('hapi')
 var config = require('../../config')
 

@@ -4,3 +4,4 @@ notes
 projects
 config.json
 bundle.js
+*.log
