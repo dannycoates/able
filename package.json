@@ -1,18 +1,18 @@
 {
   "name": "able",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A/B testing server",
   "main": "index.js",
   "scripts": {
     "start": "npm run bundle && node bin/server.js",
     "bundle": "browserify browser.js -s Able | uglifyjs -cm -o bundle.js",
     "postinstall": "npm run bundle",
-    "test": "tap test"
+    "test": "tap test/project.js"
   },
   "author": "",
   "license": "MPL 2.0",
   "dependencies": {
-    "abatar": "0.3.1",
+    "abatar": "0.4.0",
     "async": "0.9.0",
     "boom": "2.6.1",
     "browserify": "9.0.8",
