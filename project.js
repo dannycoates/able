@@ -140,7 +140,7 @@ function loadExperiments(dirname, cb) {
     function (err, filenames) {
       if (err) { return cb(err) }
       async.map(
-        filenames,
+        filenames.filter(function (f) { return !/node_modules/.test(f) }),
         function (filename, next) {
           // We may be loading new code from a file previously loaded so we must
           // delete the existing source from the `require` cache. In general
