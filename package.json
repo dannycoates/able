@@ -1,6 +1,6 @@
 {
   "name": "able",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "A/B testing server",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "author": "",
   "license": "MPL 2.0",
   "dependencies": {
-    "abatar": "0.4.0",
+    "abatar": "0.4.1",
     "async": "0.9.0",
     "boom": "2.6.1",
     "browserify": "9.0.8",
@@ -23,7 +23,7 @@
     "hapi-fxa-oauth": "2.0.1",
     "inherits": "2.0.1",
     "mozlog": "2.0.0",
-    "uglify-js": "2.4.20",
+    "uglify-js": "2.4.24",
     "xhr": "2.0.1"
   },
   "devDependencies": {
