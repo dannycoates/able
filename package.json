@@ -23,7 +23,7 @@
     "hapi-fxa-oauth": "2.0.1",
     "inherits": "2.0.1",
     "mozlog": "2.0.0",
-    "uglify-js": "2.4.20",
+    "uglify-js": "2.4.24",
     "xhr": "2.0.1"
   },
   "devDependencies": {
