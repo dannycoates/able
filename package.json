@@ -9,6 +9,7 @@
     "postinstall": "npm run bundle",
     "test": "tap test/project.js"
   },
+  "repository": "dannycoates/able",
   "author": "Danny Coates <dannycoates@gmail.com>",
   "license": "MPL-2.0",
   "dependencies": {
