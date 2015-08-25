@@ -9,8 +9,8 @@
     "postinstall": "npm run bundle",
     "test": "tap test/project.js"
   },
-  "author": "",
-  "license": "MPL 2.0",
+  "author": "Danny Coates <dannycoates@gmail.com>",
+  "license": "MPL-2.0",
   "dependencies": {
     "abatar": "0.4.1",
     "async": "0.9.0",
