@@ -15,7 +15,7 @@
     "abatar": "0.4.1",
     "async": "0.9.0",
     "boom": "2.6.1",
-    "browserify": "9.0.8",
+    "browserify": "13.0.1",
     "convict": "1.3.0",
     "github-url-to-object": "git://github.com/vladikoff/github-url-to-object.git#clone_url",
     "glob": "5.0.5",
