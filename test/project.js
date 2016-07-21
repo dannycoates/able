@@ -10,6 +10,7 @@ tap.test('properly sets git configuration', function (t) {
   t.equal(git.clone_url, 'https://github.com/mozilla/fxa-content-experiments')
   t.equal(git.branch, 'dev')
   t.equal(git.repo, 'fxa-content-experiments')
-  t.equal(git.https_url, 'https://github.com/mozilla/fxa-content-experiments/tree/dev')
+  t.equal(git.https_url, 'https://github.com/mozilla/fxa-content-experiments/blob/dev')
+  t.equal(git.clone_url, 'https://github.com/mozilla/fxa-content-experiments')
   t.end()
 })
