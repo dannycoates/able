@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npm run bundle && node bin/server.js",
     "bundle": "browserify browser.js -s Able | uglifyjs -cm -o bundle.js",
+    "lint": "eslint .",
     "postinstall": "npm run bundle",
     "test": "tap test/project.js"
   },
@@ -27,6 +28,8 @@
     "xhr": "2.0.1"
   },
   "devDependencies": {
+    "eslint": "2.10.2",
+    "eslint-config-fxa": "2.0.0",
     "tap": "0.7.1"
   }
 }
